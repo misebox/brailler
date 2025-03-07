@@ -1,8 +1,8 @@
+use clap::Parser;
 use image::{imageops::resize, GrayImage, Luma, ImageBuffer};
 use image::imageops::FilterType;
-use std::env;
+use std::str::FromStr;
 use std::error::Error;
-
 
 use imageproc::contrast::equalize_histogram;
 
@@ -50,6 +50,35 @@ pub fn contrast_stretch(input: &GrayImage) -> GrayImage {
     output
 }
 
+/// 入力のグレイスケール画像に Ordered Dithering を適用し、
+/// スクリーントーン風の 2 色（二値）画像に変換します。
+///
+/// 4x4 の Bayer 行列を使用して、各ピクセルに局所的なしきい値を与えます。
+pub fn ordered_dither(input: &GrayImage) -> GrayImage {
+    let (width, height) = input.dimensions();
+    let mut output = GrayImage::new(width, height);
+    // 4x4 Bayer 行列（各要素は 0～15 の値）
+    const MATRIX: [[u8; 4]; 4] = [
+        [ 0,  8,  2, 10],
+        [12,  4, 14,  6],
+        [ 3, 11,  1,  9],
+        [15,  7, 13,  5],
+    ];
+    let matrix_size = 4;
+    // 各セルのしきい値は、(value + 0.5)/16 * 255 で求める
+    for y in 0..height {
+        for x in 0..width {
+            let pixel = input.get_pixel(x, y);
+            let intensity = pixel[0];
+            let i = (x as usize) % matrix_size;
+            let j = (y as usize) % matrix_size;
+            let threshold = (((MATRIX[j][i] as f32 + 0.5) / 16.0) * 255.0).round() as u8;
+            let new_value = if intensity > threshold { 255 } else { 0 };
+            output.put_pixel(x, y, Luma([new_value]));
+        }
+    }
+    output
+}
 
 #[macro_export]
 macro_rules! measure_time {
@@ -70,13 +99,30 @@ pub fn save_image(img: &GrayImage, path: &str) {
 ///
 /// - `input`: グレースケール画像
 /// - 戻り値: ヒストグラム平坦化された画像
-pub fn process_image(input: &GrayImage) -> GrayImage {
+fn process_image(input: &GrayImage, opts: &Args) -> GrayImage {
     // ヒストグラム平坦化でコントラスト強調
-    let img = equalize_histogram(input);
-    let img = invert_image(&img);
-    let img = contrast_stretch(&img);
+    let img = if opts.histogram {
+        equalize_histogram(input)
+    } else {
+        input.clone()
+    };
+    let img = if opts.contrast {
+        contrast_stretch(&img)
+    } else {
+        img
+    };
+    let img = if opts.invert{
+        invert_image(&img)
+    } else {
+        img
+    };
+    let img = if opts.dither {
+        ordered_dither(&img)
+    } else {
+        img
+    };
     // saveimage
-    save_image(&img, "normalized.png");
+    save_image(&img, "processed.png");
     img
 }
 
@@ -126,35 +172,94 @@ fn generate_braille(img: &GrayImage, cols: u32, rows: u32) -> String {
     output
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
-    // コマンドライン引数から画像パスを取得
-    let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        eprintln!("Usage: {} <image_path>", args[0]);
-        return Ok(());
-    }
+#[derive(Debug, Clone)]
+struct Size(u32, u32);
 
-    let img_path = &args[1];
-    let (cols, rows) = if args.len() == 4 {
-        let _cols = args[2].parse::<u32>().unwrap();
-        if _cols < 1 {
-            eprintln!("Columns must be greater than 0");
-            return Ok(());
+impl ToString for Size {
+    fn to_string(&self) -> String {
+        format!("{}x{}", self.0, self.1)
+    }
+}
+
+impl FromStr for Size {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        // 'x' または ',' で分割
+        let separators = ['x', ','];
+        let parts: Vec<&str> = s.split(|c| separators.contains(&c)).collect();
+        if parts.len() != 2 {
+            return Err("サイズは WIDTHxHEIGHT または WIDTH,HEIGHT の形式で指定してください".into());
         }
-        let _rows = args[3].parse::<u32>().unwrap();
-        if _rows < 1 {
-            eprintln!("Rows must be greater than 0");
-            return Ok(());
-        }
-        (_cols, _rows)
-    } else {
-        (80, 40)
-    };
+        let width = parts[0].trim().parse::<u32>().map_err(|e| e.to_string())?;
+        let height = parts[1].trim().parse::<u32>().map_err(|e| e.to_string())?;
+        Ok(Size(width, height))
+    }
+}
+
+/// 画像処理を行うプログラム
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// 入力画像ファイルパス
+    #[arg(value_name = "INPUT")]
+    input: String,
+
+    // /// 出力画像ファイルパス
+    // #[arg(value_name = "OUTPUT")]
+    // output: String,
+
+    /// 出力画像の列数（横幅）と行数（縦幅）
+    #[arg(short, long, default_value = "80x40")]
+    size: Size,
+
+    /// Ordered dither を適用する
+    #[arg(long)]
+    dither: bool,
+
+    /// コントラストストレッチ（Min-Max 正規化）を適用する
+    #[arg(long)]
+    contrast: bool,
+
+    /// 画像の色を反転する
+    #[arg(long)]
+    invert: bool,
+
+    /// ヒストグラム平坦化を適用する
+    #[arg(long)]
+    histogram: bool,
+
+    /// Otsu の方法による二値化を適用する
+    #[arg(long)]
+    otsu: bool,
+
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let args = Args::parse();
+
+    // // 各フラグの状態を表示（デバッグ用）
+    // eprintln!("Input: {}", &args.input);
+    // // eprintln!("Output: {}", args.output);
+    // eprintln!(
+    //     "Apply size: {}, dither: {}, contrast: {}, invert: {}, histogram: {}, otsu: {}",
+    //     args.size.to_string(),
+    //     args.dither,
+    //     args.contrast,
+    //     args.invert,
+    //     args.histogram,
+    //     args.otsu,
+    // );
+
+    // 入力画像ファイルパス
+    let img_path = &args.input;
+
+    // 出力画像のサイズ
+    let Size(cols, rows) = args.size;
 
     // 画像を開いてグレースケール化
     let img = measure_time!(image::open(img_path)?.to_luma8());
 
-    let img = measure_time!(process_image(&img));
+    let img = measure_time!(process_image(&img, &args));
 
     // 160x160 にリサイズ（FilterType::Nearest でピクセル感を維持）
     let (width, height) = (cols * 2, rows * 4);
