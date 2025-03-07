@@ -73,7 +73,7 @@ pub fn save_image(img: &GrayImage, path: &str) {
 pub fn process_image(input: &GrayImage) -> GrayImage {
     // ヒストグラム平坦化でコントラスト強調
     let img = equalize_histogram(input);
-    // let img = invert_image(&img);
+    let img = invert_image(&img);
     let img = contrast_stretch(&img);
     // saveimage
     save_image(&img, "normalized.png");
