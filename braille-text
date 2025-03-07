@@ -13,4 +13,4 @@ COLS=$3
 
 convert -fill white -background 'srgb(10,10,10)' -font "Noto-Sans-CJK-JP" -pointsize 400 label:"${TEXT}" /tmp/img.png
 convert /tmp/img.png -fuzz 10% -trim +repage /tmp/output.png
-cargo run /tmp/output.png $ROWS $COLS
+brailler /tmp/output.png $ROWS $COLS
