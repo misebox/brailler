@@ -1,0 +1,16 @@
+#!/bin/bash
+
+
+if [ $# -ne 3 ]
+then
+  echo "Usage: $0 {text} {rows} {cols}"
+  exit 1
+fi
+
+TEXT=$1
+ROWS=$2
+COLS=$3
+
+convert -fill white -background 'srgb(10,10,10)' -font "Noto-Sans-CJK-JP" -pointsize 400 label:"${TEXT}" /tmp/img.png
+convert /tmp/img.png -fuzz 10% -trim +repage /tmp/output.png
+cargo run /tmp/output.png $ROWS $COLS
