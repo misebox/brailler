@@ -141,17 +141,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             eprintln!("Columns must be greater than 0");
             return Ok(());
         }
-        if _cols % 2 != 0 {
-            eprintln!("Columns must be even number");
-            return Ok(());
-        }
         let _rows = args[3].parse::<u32>().unwrap();
         if _rows < 1 {
             eprintln!("Rows must be greater than 0");
-            return Ok(());
-        }
-        if _rows % 4 != 0 {
-            eprintln!("Rows must be multiple of 4");
             return Ok(());
         }
         (_cols, _rows)
