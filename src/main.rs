@@ -17,10 +17,16 @@ macro_rules! measure_time {
 mod image_processing;
 mod braille;
 mod args;
+mod dot_canvas;
+mod position;
+mod size;
 
 use image_processing::*;
 use braille::*;
 use args::Args;
+use dot_canvas::*;
+use position::*;
+use size::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();

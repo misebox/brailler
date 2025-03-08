@@ -1,3 +1,5 @@
+use crate::position::Position;
+
 /// 各dotをu8で表現するキャンバス。各要素は 0 (off) または 1 (on) を持つ。
 pub struct DotCanvas {
     width: usize,
@@ -16,9 +18,9 @@ impl DotCanvas {
     }
 
     /// 指定した (x, y) のdotに値を設定する。valueは0か1とする。
-    pub fn set(&mut self, x: usize, y: usize, value: u8) {
-        assert!(x < self.width && y < self.height, "Index out of bounds");
-        self.data[y * self.width + x] = value;
+    pub fn set(&mut self, x: i32, y: i32, value: u8) {
+        assert!(0 <= x && x < self.width as i32 && y < self.height as i32, "Index out of bounds");
+        self.data[(y * self.width as i32 + x) as usize] = value;
     }
 
     /// 指定した (x, y) のdotの値を取得する。
@@ -27,17 +29,17 @@ impl DotCanvas {
         self.data[y * self.width + x]
     }
 
-    pub fn draw_line(&self, p1: Position, p2: Position) {
+    pub fn draw_line(&mut self, p1: Position, p2: Position) {
         let dx = p2.x as i32 - p1.x as i32;
         let dy = p2.y as i32 - p1.y as i32;
         let steps = dx.abs().max(dy.abs());
         for i in 0..=steps {
             let x = p1.x as i32 + dx * i / steps;
             let y = p1.y as i32 + dy * i / steps;
-            self.set(x as usize, y as usize, 1);
+            self.set(x, y, 1);
         }
     }
-    pub fn draw_rect(&self, p1: Position, p2: Position) {
+    pub fn draw_rect(&mut self, p1: Position, p2: Position) {
         for x in p1.x..=p2.x {
             self.set(x, p1.y, 1);
             self.set(x, p2.y, 1);
@@ -47,7 +49,7 @@ impl DotCanvas {
             self.set(p2.x, y, 1);
         }
     }
-    pub fn draw_circle(&self, p: Position, radius: i32) {
+    pub fn draw_circle(&mut self, p: Position, radius: i32) {
         let mut x = 0;
         let mut y = radius;
         let mut d = 3 - 2 * radius;
@@ -69,14 +71,14 @@ impl DotCanvas {
             x += 1;
         }
     }
-    pub fn fill_rect(&self, p1: Position, p2: Position) {
+    pub fn fill_rect(&mut self, p1: Position, p2: Position) {
         for y in p1.y..=p2.y {
             for x in p1.x..=p2.x {
                 self.set(x, y, 1);
             }
         }
     }
-    pub fn fill_circle(&self, center: Position, radius: i32) {
+    pub fn fill_circle(&mut self, center: Position, radius: i32) {
         let mut x = 0;
         let mut y = radius;
         let mut d = 3 - 2 * radius;
@@ -98,12 +100,21 @@ impl DotCanvas {
             x += 1;
         }
     }
-    pub fn clear(&self) {
+    pub fn clear(&mut self) {
         for y in 0..self.height {
             for x in 0..self.width {
-                self.set(x, y, 0);
+                self.set(x as i32, y as i32, 0);
             }
         }
+    }
+    pub fn clone(&self) -> DotCanvas {
+        let mut new_canvas = DotCanvas::new(self.width, self.height);
+        for y in 0..self.height {
+            for x in 0..self.width {
+                new_canvas.set(x as i32, y as i32, self.get(x, y));
+            }
+        }
+        new_canvas
     }
     /// 2x4ドット毎にグループ化してUnicode Braille文字に変換する。
     /// 出力はキャンバスのBrailleパターン文字列。
