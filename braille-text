@@ -1,16 +1,15 @@
 #!/bin/bash
 
 
-if [ $# -ne 3 ]
+if [ $# -lt 1 ]
 then
-  echo "Usage: $0 {text} {rows} {cols}"
+  echo "Usage: $0 {text} {options}"
   exit 1
 fi
 
 TEXT=$1
-ROWS=$2
-COLS=$3
+shift
 
 convert -fill white -background 'srgb(10,10,10)' -font "Noto-Sans-CJK-JP" -pointsize 400 label:"${TEXT}" /tmp/img.png
 convert /tmp/img.png -fuzz 10% -trim +repage /tmp/output.png
-brailler /tmp/output.png $ROWS $COLS
+brailler /tmp/output.png $*
