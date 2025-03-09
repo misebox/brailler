@@ -131,8 +131,8 @@ pub fn preprocess_image(
 ) -> GrayImage {
 
     let img = input.clone();
-    let img = if contrast == ContrastOption::stretch { contrast_stretch(&img) } else { img };
-    let img = if contrast == ContrastOption::equalize { equalize_histogram(&img) } else { img };
+    let img = if contrast == ContrastOption::Stretch { contrast_stretch(&img) } else { img };
+    let img = if contrast == ContrastOption::Equalize { equalize_histogram(&img) } else { img };
     let img = if !invert { invert_image(&img) } else { img };
     img
 
@@ -145,11 +145,11 @@ pub fn binarize(
 ) -> GrayImage {
 
     let img = input.clone();
-    let img = if binarize == BinarizeOption::odith {
+    let img = if binarize == BinarizeOption::Odith {
         ordered_dither(&img)
-    } else if binarize == BinarizeOption::fsdith {
+    } else if binarize == BinarizeOption::Fsdith {
         floyd_steinberg_dither(&img)
-    } else if binarize == BinarizeOption::otsu {
+    } else if binarize == BinarizeOption::Otsu {
         binarize_with_otsu(&img)
     } else {
         img

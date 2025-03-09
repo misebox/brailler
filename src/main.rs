@@ -2,15 +2,34 @@ use clap::Parser;
 use image::{self, imageops::resize, GrayImage};
 use image::imageops::FilterType;
 use std::error::Error;
+use std::env;
+use std::sync::LazyLock;
+
+/// 環境変数 key を bool として取得する関数
+/// 指定されていなかったり、解釈できない場合は false を返します
+fn get_env_bool(key: &str) -> bool {
+    env::var(key).map(|s| {
+        match s.to_lowercase().as_str() {
+            "true" | "1" | "yes" => true,
+            "false" | "0" | "no" => false,
+            _ => false, // 不明な値は false とする
+        }
+    }).unwrap_or(false)
+}
+static MEASURE_TIME: LazyLock<bool> = LazyLock::new(|| get_env_bool("MEASURE_TIME"));
 
 #[macro_export]
 macro_rules! measure_time {
     ($expr:expr) => {{
-        let start = std::time::Instant::now();
-        let result = $expr;
-        let duration = start.elapsed();
-        eprintln!("Execution time ({}): {:?}", stringify!($expr), duration);
-        result
+        if *MEASURE_TIME {
+            let start = std::time::Instant::now();
+            let result = $expr;
+            let duration = start.elapsed();
+            eprintln!("Execution time ({}): {:?}", stringify!($expr), duration);
+            result
+        } else {
+            $expr
+        }
     }};
 }
 
@@ -30,7 +49,9 @@ use size::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
-    eprintln!("{:?}", args);
+    if args.verbose {
+        eprintln!("{:?}", args);
+    }
 
     // 入力画像ファイルパスとサイズ
     let img_path = &args.input;
@@ -40,9 +61,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     let img: GrayImage = measure_time!(image::open(img_path)?.to_luma8());
 
     let (w, h) = img.dimensions();
-    eprintln!("Image size: {}x{}", w, h);
+    if args.verbose {
+        eprintln!("Image size: {}x{}", w, h);
+    }
     let ratio = w as f32 / h as f32 * 2f32;
-    eprintln!("Ratio: {}", ratio);
+    if args.verbose {
+        eprintln!("Ratio: {}", ratio);
+    }
     if cols == 0 && rows == 0 {
         cols = 60;  // Default cols
     }
@@ -51,7 +76,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     } else if rows == 0 {
         rows = (cols as f64 / ratio as f64) as u32;
     }
-    eprintln!("Cols: {}, Rows: {}", cols, rows);
+    if args.verbose {
+        eprintln!("Cols: {}, Rows: {}", cols, rows);
+    }
 
 
     let img = measure_time!(preprocess_image(

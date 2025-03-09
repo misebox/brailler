@@ -5,31 +5,31 @@ use clap::ValueEnum;
 
 #[derive(ValueEnum, PartialEq, Clone, Debug)]
 pub enum ContrastOption {
-    none,
-    stretch,
-    equalize,
+    None,
+    Stretch,
+    Equalize,
 }
 
 #[derive(ValueEnum, PartialEq, Clone, Debug)]
 pub enum BinarizeOption {
-    none,
-    odith,
-    fsdith,
-    otsu,
+    None,
+    Odith,
+    Fsdith,
+    Otsu,
 }
 
 #[derive(Parser, Debug)]
 #[command(author, version, about)]
 pub struct Args {
-    /// 入力画像ファイルパス
+    /// Input image file path
     #[arg(value_name = "INPUT")]
     pub input: String,
 
-    /// 出力画像の列数（横幅）と行数（縦幅）
+    /// Output size({width}x{height})
     #[arg(short, long, default_value = "0x0")]
     pub size: Size,
 
-    /// コントラスト (ContrastOption::none, ContrastOption::stretch, ContrastOption::equalize)
+    /// Contrast option
     #[arg(long, default_value = "none")]
     pub contrast: ContrastOption,
 
@@ -37,7 +37,12 @@ pub struct Args {
     #[arg(long)]
     pub invert: bool,
 
-    /// 2値化 (BinarizeOption::None, BinarizeOption::odith, BinarizeOption::fsdith, BinarizeOption::otsu)
+    /// Binarize option
     #[arg(long, default_value = "none")]
     pub binarize: BinarizeOption,
+
+    /// Verbose mode
+    #[arg(short, long)]
+    pub verbose: bool,
+
 }
