@@ -1,7 +1,6 @@
 # brailler
 
 This tool converts images into Braille dot pattern text.
-You can execute it by running:
 
 ## Usage
 

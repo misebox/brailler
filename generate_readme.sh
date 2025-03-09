@@ -6,12 +6,13 @@ IMG_02=samples/Vermeer_The_Girl_With_The_Pearl_Earring_B.jpg
 CODE='`'
 CODE_BLOCK='```'
 
+cd $(dirname $0)
+cargo install --path .
 
-cat <<EOD
+cat >README.md <<EOD
 # brailler
 
 This tool converts images into Braille dot pattern text.
-You can execute it by running:
 
 ## Usage
 
