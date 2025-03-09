@@ -15,7 +15,7 @@ Arguments:
 Options:
   -s, --size <SIZE>          Output size({width}x{height}) [default: 0x0]
       --contrast <CONTRAST>  Contrast option [default: none] [possible values: none, stretch, equalize]
-      --invert               画像の色を反転する
+      --invert               Invert dot color
       --binarize <BINARIZE>  Binarize option [default: none] [possible values: none, odith, fsdith, otsu]
   -v, --verbose              Verbose mode
   -h, --help                 Print help
