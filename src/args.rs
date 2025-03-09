@@ -33,7 +33,7 @@ pub struct Args {
     #[arg(long, default_value = "none")]
     pub contrast: ContrastOption,
 
-    /// 画像の色を反転する
+    /// Invert dot color
     #[arg(long)]
     pub invert: bool,
 
