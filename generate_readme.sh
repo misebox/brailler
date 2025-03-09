@@ -3,22 +3,33 @@
 IMG_01=samples/Munch_Scream.jpg
 IMG_02=samples/Vermeer_The_Girl_With_The_Pearl_Earring_B.jpg
 
+CODE='`'
 CODE_BLOCK='```'
 
-cat <<EOD
 
-### usage
+cat <<EOD
+# brailler
+
+This tool converts images into Braille dot pattern text.
+You can execute it by running:
+
+## Usage
+
+${CODE_BLOCK}
+\$ brailler --help
+$( brailler --help )
+${CODE_BLOCK}
+
+Example:
 
 ${CODE_BLOCK}
 \$ brailler $IMG_01 
-$(brailler $IMG_01)
+$( brailler $IMG_01 )
 ${CODE_BLOCK}
 
+## size
 
-
-### size
-
-`ex: brailler --size {cols or 0}x{rows or 0}`
+${CODE}ex: brailler $IMG_01 --size {cols or 0}x{rows or 0}${CODE}
 
 This option allows you to specify the size of the output.
 Sizes are specified in the form of "{cols}x{rows}".
@@ -37,12 +48,12 @@ ${CODE_BLOCK}
 
 ### contrast
 
-- `--contrast stretch` option allows you to preprocess the image with Contrast Stretch.
-- `--contrast equalize` option allows you to preprocess the image with Histogram Equalization.
+- ${CODE}--contrast stretch${CODE} option allows you to preprocess the image with Contrast Stretch.
+- ${CODE}--contrast equalize${CODE} option allows you to preprocess the image with Histogram Equalization.
 
 ### invert
 
-- `--invert` option allows you to invert the image.
+- ${CODE}--invert${CODE} option allows you to invert the image.
 
 
 ${CODE_BLOCK}
@@ -75,9 +86,9 @@ ${CODE_BLOCK}
 
 ### Binarize
 
-- `--binarize odith` option allows you to binarize the image with Ordered Dithering.
-- `--binarize fsdith` option allows you to binarize the image with Floyd-Steinberg Dithering.
-- `--binarize otsu` option allows you to binarize the image with Otsu's method.
+- ${CODE}--binarize odith${CODE} option allows you to binarize the image with Ordered Dithering.
+- ${CODE}--binarize fsdith${CODE} option allows you to binarize the image with Floyd-Steinberg Dithering.
+- ${CODE}--binarize otsu${CODE} option allows you to binarize the image with Otsu's method.
 
 ${CODE_BLOCK}
 

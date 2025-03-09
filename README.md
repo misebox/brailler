@@ -3,13 +3,26 @@
 This tool converts images into Braille dot pattern text.
 You can execute it by running:
 
-### usage
+## Usage
 
 ```
-  brailler {image filename} [options]
+$ brailler --help
+Usage: brailler [OPTIONS] <INPUT>
+
+Arguments:
+  <INPUT>  Input image file path
+
+Options:
+  -s, --size <SIZE>          Output size({width}x{height}) [default: 0x0]
+      --contrast <CONTRAST>  Contrast option [default: none] [possible values: none, stretch, equalize]
+      --invert               画像の色を反転する
+      --binarize <BINARIZE>  Binarize option [default: none] [possible values: none, odith, fsdith, otsu]
+  -v, --verbose              Verbose mode
+  -h, --help                 Print help
+  -V, --version              Print version
 ```
 
-ex:
+Example:
 
 ```
 $ brailler samples/Munch_Scream.jpg 
@@ -53,11 +66,9 @@ $ brailler samples/Munch_Scream.jpg
 ⠀⠀⠀⠀⠀⠀⠀⢀⡀⠀⠀⠈⡄⡈⠙⠀⠀⠀⠀⠐⠀⡀⠄⠄⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠂⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠀⠀⠀⢠⠀⠀
 ```
 
+## size
 
-
-### size
-
-
+`ex: brailler samples/Munch_Scream.jpg --size {cols or 0}x{rows or 0}`
 
 This option allows you to specify the size of the output.
 Sizes are specified in the form of "{cols}x{rows}".
@@ -95,12 +106,12 @@ $ brailler samples/Munch_Scream.jpg --size 0x20
 
 ### contrast
 
--  option allows you to preprocess the image with Contrast Stretch.
--  option allows you to preprocess the image with Histogram Equalization.
+- `--contrast stretch` option allows you to preprocess the image with Contrast Stretch.
+- `--contrast equalize` option allows you to preprocess the image with Histogram Equalization.
 
 ### invert
 
--  option allows you to invert the image.
+- `--invert` option allows you to invert the image.
 
 
 ```
@@ -194,9 +205,9 @@ paste -d' '  \
 
 ### Binarize
 
--  option allows you to binarize the image with Ordered Dithering.
--  option allows you to binarize the image with Floyd-Steinberg Dithering.
--  option allows you to binarize the image with Otsu's method.
+- `--binarize odith` option allows you to binarize the image with Ordered Dithering.
+- `--binarize fsdith` option allows you to binarize the image with Floyd-Steinberg Dithering.
+- `--binarize otsu` option allows you to binarize the image with Otsu's method.
 
 ```
 
