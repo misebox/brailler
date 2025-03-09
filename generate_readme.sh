@@ -1,7 +1,7 @@
 #!/bin/bash
 
-IMG_01=samples/Munch_Scream.jpg
-IMG_02=samples/Vermeer_The_Girl_With_The_Pearl_Earring_B.jpg
+IMG_01=samples/Vermeer_The_Girl_With_The_Pearl_Earring_B.jpg
+IMG_02=samples/Munch_Scream.jpg
 
 CODE='`'
 CODE_BLOCK='```'
@@ -58,30 +58,16 @@ ${CODE_BLOCK}
 
 
 ${CODE_BLOCK}
-
 paste -d' '  \\
   <( brailler $IMG_01 --size 50x0 ) \\
   <( brailler $IMG_01 --size 50x0 --contrast stretch ) \\
   <( brailler $IMG_01 --size 50x0 --contrast equalize ) \\
   <( brailler $IMG_01 --size 50x0 --invert )
-
 $( paste -d' '  \
   <( brailler $IMG_01 --size 50x0 ) \
   <( brailler $IMG_01 --size 50x0 --contrast stretch ) \
   <( brailler $IMG_01 --size 50x0 --contrast equalize ) \
   <( brailler $IMG_01 --size 50x0 --invert ) \
-)
-
-paste -d' '  \\
-  <( brailler $IMG_02 --size 50x0 ) \\
-  <( brailler $IMG_02 --size 50x0 --contrast stretch ) \\
-  <( brailler $IMG_02 --size 50x0 --contrast equalize ) \\
-  <( brailler $IMG_02 --size 50x0 --invert )
-$( paste -d' '  \
-  <( brailler $IMG_02 --size 50x0 ) \
-  <( brailler $IMG_02 --size 50x0 --contrast stretch ) \
-  <( brailler $IMG_02 --size 50x0 --contrast equalize ) \
-  <( brailler $IMG_02 --size 50x0 --invert ) \
 )
 ${CODE_BLOCK}
 
@@ -92,19 +78,6 @@ ${CODE_BLOCK}
 - ${CODE}--binarize otsu${CODE} option allows you to binarize the image with Otsu's method.
 
 ${CODE_BLOCK}
-
-paste -d' '  \\
-  <( brailler $IMG_01 --size 50x0 ) \\
-  <( brailler $IMG_01 --size 50x0 --binarize odith ) \\
-  <( brailler $IMG_01 --size 50x0 --binarize fsdith ) \\
-  <( brailler $IMG_01 --size 50x0 --binarize otsu )
-$( paste -d' '  \
-  <( brailler $IMG_01 --size 50x0 ) \
-  <( brailler $IMG_01 --size 50x0 --binarize odith ) \
-  <( brailler $IMG_01 --size 50x0 --binarize fsdith ) \
-  <( brailler $IMG_01 --size 50x0 --binarize otsu ) \
-)
-
 paste -d' '  \\
   <( brailler $IMG_02 --size 50x0 ) \\
   <( brailler $IMG_02 --size 50x0 --binarize odith ) \\
@@ -116,7 +89,6 @@ $( paste -d' '  \
   <( brailler $IMG_02 --size 50x0 --binarize fsdith ) \
   <( brailler $IMG_02 --size 50x0 --binarize otsu ) \
 )
-
 ${CODE_BLOCK}
 
 
