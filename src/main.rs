@@ -56,7 +56,6 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let img = measure_time!(preprocess_image(
         &img,
-        args.histogram,
         args.contrast,
         args.invert,
     ));
@@ -64,7 +63,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     // リサイズしてキャンバスに貼り付け
     let (width, height) = (cols * 2, rows * 4);
     let img = measure_time!(resize(&img, width, height, FilterType::Nearest));
-    let img = measure_time!(binarize(&img, args.odith, args.fsdith, args.otsu));
+
+    // ピクセルを二値化する
+    let img = measure_time!(binarize(&img, args.binarize));
 
     let output = measure_time!(generate_braille(&img, cols, rows));
 

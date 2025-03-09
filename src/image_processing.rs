@@ -2,6 +2,9 @@ use image::{GrayImage, Luma, ImageBuffer, GenericImage};
 use imageproc::contrast::equalize_histogram;
 use imageproc::contrast::otsu_level;
 
+use crate::args::BinarizeOption;
+use crate::args::ContrastOption;
+
 
 
 // 画像の色反転
@@ -123,56 +126,34 @@ pub fn binarize_with_otsu(input: &GrayImage) -> GrayImage {
 // 画像処理パイプライン
 pub fn preprocess_image(
     input: &GrayImage,
-    contrast: bool,
-    histogram: bool,
+    contrast: ContrastOption,
     invert: bool,
 ) -> GrayImage {
 
-    // let tmp = input.clone(); 
-    // let tmp = contrast_stretch(&tmp);
-    // save_image(&tmp, "contrast_stretch.png");
-
-    // let tmp = input.clone(); 
-    // let tmp = equalize_histogram(&tmp);
-    // save_image(&tmp, "equalize_histogram.png");
-
-    // let tmp = input.clone();
-    // let tmp = invert_image(&tmp);
-    // save_image(&tmp, "invert_image.png");
-
     let img = input.clone();
-    let img = if histogram { equalize_histogram(&img) } else { img };
-    let img = if contrast { contrast_stretch(&img) } else { img };
+    let img = if contrast == ContrastOption::stretch { contrast_stretch(&img) } else { img };
+    let img = if contrast == ContrastOption::equalize { equalize_histogram(&img) } else { img };
     let img = if !invert { invert_image(&img) } else { img };
-
     img
+
 }
 
 // 画像処理パイプライン
 pub fn binarize(
     input: &GrayImage,
-    odith: bool,
-    fsdith: bool,
-    otsu: bool,
+    binarize: BinarizeOption,
 ) -> GrayImage {
 
-    // let tmp = input.clone();
-    // let tmp = ordered_dither(&tmp);
-    // save_image(&tmp, "ordered_dither.png");
-
-    // let tmp = input.clone();
-    // let tmp = floyd_steinberg_dither(&tmp);
-    // save_image(&tmp, "floyd_steinberg_dither.png");
-
-    // let tmp = input.clone();
-    // let tmp = binarize_with_otsu(&tmp);
-    // save_image(&tmp, "binarize_with_otsu.png");
-
     let img = input.clone();
-    let img = if otsu { binarize_with_otsu(&img) } else { img };
-    let img = if odith { ordered_dither(&img) } else { img };
-    let img = if fsdith { floyd_steinberg_dither(&img) } else { img };
-
+    let img = if binarize == BinarizeOption::odith {
+        ordered_dither(&img)
+    } else if binarize == BinarizeOption::fsdith {
+        floyd_steinberg_dither(&img)
+    } else if binarize == BinarizeOption::otsu {
+        binarize_with_otsu(&img)
+    } else {
+        img
+    };
     img
 }
 
