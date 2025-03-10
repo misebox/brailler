@@ -1,7 +1,9 @@
 #!/bin/bash
 
+IMG_00=samples/cube.png
 IMG_01=samples/Vermeer_The_Girl_With_The_Pearl_Earring_B.jpg
 IMG_02=samples/Munch_Scream.jpg
+IMG_02=samples/cube.png
 
 CODE='`'
 CODE_BLOCK='```'
@@ -24,8 +26,8 @@ ${CODE_BLOCK}
 Example:
 
 ${CODE_BLOCK}
-\$ brailler $IMG_01 
-$( brailler $IMG_01 )
+\$ brailler $IMG_00 
+$( brailler $IMG_00 )
 ${CODE_BLOCK}
 
 ## size
