@@ -121,19 +121,6 @@ fn main() -> Result<(), Box<dyn Error>> {
             eprintln!("Image FPS: {}", video_data.fps);
             eprintln!("Cols: {}, Rows: {}", cols, rows);
         }
-        // if args.scriptify {
-        //     // スクリプト出力
-        //     let mut script = String::new();
-        //     for img in video_data.frames {
-        //         let output = measure_time!(generate_braille(&img, cols, rows));
-        //         script.push_str(&output);
-        //         script.push_str("\n");
-        //     }
-        // } else {
-        //     // wait for key input
-        //     let mut input = String::new();
-        //     io::stdin().read_line(&mut input).unwrap();
-        // }
 
         let avg_wait = std::time::Duration::from_secs_f32(1.0 / video_data.fps);
 

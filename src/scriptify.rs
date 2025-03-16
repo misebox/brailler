@@ -60,8 +60,6 @@ for item in "${array[@]}"; do
     echo "${ESC}$item"
     sleep {{SLEEP}}
 done
-
-
 "#;
 
 pub fn generate_bash_script_for_image(output: &str) -> io::Result<String> {
