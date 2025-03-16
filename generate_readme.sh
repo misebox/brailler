@@ -26,8 +26,8 @@ ${CODE_BLOCK}
 Example:
 
 ${CODE_BLOCK}
-\$ brailler $IMG_00 
-$( brailler $IMG_00 )
+\$ brailler $IMG_00 --size 60x0
+$( brailler $IMG_00 --size 60x0 )
 ${CODE_BLOCK}
 
 ## size
@@ -93,5 +93,23 @@ $( paste -d' '  \
 )
 ${CODE_BLOCK}
 
+## Video
+
+- ${CODE}--video${CODE} option allows you to convert video to Braille dot pattern text.
+
+${CODE_BLOCK}
+# Convert video to Braille dot pattern text
+$ brailler samples/test.mp4 --contrast stretch --binarize fsdith --size 0x60
+${CODE_BLOCK}
+
+## Scriptify
+
+- ${CODE}--scriptify${CODE} option allows you to convert text to Braille dot pattern text.
+
+${CODE_BLOCK}
+$ brailler samples/test.mp4 --contrast stretch --binarize fsdith --size 0x60 --scriptify play_mov.sh
+
+$ ./play_mov.sh
+${CODE_BLOCK}
 
 EOD

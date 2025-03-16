@@ -9,22 +9,23 @@ $ brailler --help
 Usage: brailler [OPTIONS] <INPUT>
 
 Arguments:
-  <INPUT>  Input image file path
+  <INPUT>  Input image file path or video file path
 
 Options:
-  -s, --size <SIZE>          Output size({width}x{height}) [default: 0x0]
-      --contrast <CONTRAST>  Contrast option [default: none] [possible values: none, stretch, equalize]
-      --invert               Invert dot color
-      --binarize <BINARIZE>  Binarize option [default: none] [possible values: none, odith, fsdith, otsu]
-  -v, --verbose              Verbose mode
-  -h, --help                 Print help
-  -V, --version              Print version
+  -s, --size <SIZE>            Output size({width}x{height}) [default: 0x0]
+      --contrast <CONTRAST>    Contrast option [default: none] [possible values: none, stretch, equalize]
+      --invert                 Invert dot color
+      --binarize <BINARIZE>    Binarize option [default: none] [possible values: none, odith, fsdith, otsu]
+      --scriptify <SCRIPTIFY>  Generate a bash script that shows the braille text [default: ]
+  -v, --verbose                Verbose mode
+  -h, --help                   Print help
+  -V, --version                Print version
 ```
 
 Example:
 
 ```
-$ brailler samples/cube.png 
+$ brailler samples/cube.png --size 60x0
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -194,4 +195,22 @@ paste -d' '  \
    
 ```
 
+## Video
+
+- `--video` option allows you to convert video to Braille dot pattern text.
+
+```
+# Convert video to Braille dot pattern text
+$ brailler samples/test.mp4 --contrast stretch --binarize fsdith --size 0x60
+```
+
+## Scriptify
+
+- `--scriptify` option allows you to convert text to Braille dot pattern text.
+
+```
+$ brailler samples/test.mp4 --contrast stretch --binarize fsdith --size 0x60 --scriptify play_mov.sh
+
+$ ./play_mov.sh
+```
 
