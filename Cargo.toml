@@ -7,3 +7,4 @@ edition = "2024"
 clap = { version = "4.5.31", features = ["derive"] }
 image = "0.25.5"
 imageproc = "0.25.0"
+infer = "0.19.0"

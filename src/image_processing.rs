@@ -123,33 +123,35 @@ pub fn binarize_with_otsu(input: &GrayImage) -> GrayImage {
     
     output
 }
+
+
+#[allow(clippy::let_and_return)]
 // 画像処理パイプライン
 pub fn preprocess_image(
     input: &GrayImage,
-    contrast: ContrastOption,
-    invert: bool,
+    contrast_opt: ContrastOption,
+    invert_opt: bool,
 ) -> GrayImage {
-
     let img = input.clone();
-    let img = if contrast == ContrastOption::Stretch { contrast_stretch(&img) } else { img };
-    let img = if contrast == ContrastOption::Equalize { equalize_histogram(&img) } else { img };
-    let img = if !invert { invert_image(&img) } else { img };
+    let img = if contrast_opt == ContrastOption::Stretch { contrast_stretch(&img) } else { img };
+    let img = if contrast_opt == ContrastOption::Equalize { equalize_histogram(&img) } else { img };
+    let img = if !invert_opt { invert_image(&img) } else { img };
     img
-
 }
 
 // 画像処理パイプライン
+#[allow(clippy::let_and_return)]
 pub fn binarize(
     input: &GrayImage,
-    binarize: BinarizeOption,
+    binarize_opt: BinarizeOption,
 ) -> GrayImage {
 
     let img = input.clone();
-    let img = if binarize == BinarizeOption::Odith {
+    let img = if binarize_opt == BinarizeOption::Odith {
         ordered_dither(&img)
-    } else if binarize == BinarizeOption::Fsdith {
+    } else if binarize_opt == BinarizeOption::Fsdith {
         floyd_steinberg_dither(&img)
-    } else if binarize == BinarizeOption::Otsu {
+    } else if binarize_opt == BinarizeOption::Otsu {
         binarize_with_otsu(&img)
     } else {
         img

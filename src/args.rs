@@ -3,14 +3,14 @@ use crate::size::Size; // Added import for Size
 
 use clap::ValueEnum;
 
-#[derive(ValueEnum, PartialEq, Clone, Debug)]
+#[derive(ValueEnum, PartialEq, Clone, Debug, Copy)]
 pub enum ContrastOption {
     None,
     Stretch,
     Equalize,
 }
 
-#[derive(ValueEnum, PartialEq, Clone, Debug)]
+#[derive(ValueEnum, PartialEq, Clone, Debug, Copy)]
 pub enum BinarizeOption {
     None,
     Odith,
@@ -18,7 +18,7 @@ pub enum BinarizeOption {
     Otsu,
 }
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Clone)]
 #[command(author, version, about)]
 pub struct Args {
     /// Input image file path
