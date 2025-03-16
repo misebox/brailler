@@ -104,7 +104,7 @@ ${CODE_BLOCK}
 
 ## Scriptify
 
-- ${CODE}--scriptify${CODE} option allows you to convert text to Braille dot pattern text.
+- ${CODE}--scriptify${CODE} option allows you to generate a shell script to show the braille text.
 
 ${CODE_BLOCK}
 $ brailler samples/test.mp4 --contrast stretch --binarize fsdith --size 0x60 --scriptify play_mov.sh
