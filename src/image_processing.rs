@@ -1,9 +1,11 @@
+use image::imageops::{resize, FilterType};
 use image::{GrayImage, Luma, ImageBuffer, GenericImage};
 use imageproc::contrast::equalize_histogram;
 use imageproc::contrast::otsu_level;
 
 use crate::args::BinarizeOption;
 use crate::args::ContrastOption;
+use crate::measure_time;
 
 
 
@@ -159,6 +161,22 @@ pub fn binarize(
     img
 }
 
+pub fn process_image(
+    img: &GrayImage,
+    cols: u32,
+    rows: u32,
+    contrast_opt: ContrastOption,
+    invert_opt: bool,
+    binarize_opt: BinarizeOption,
+) -> GrayImage {
+    let img = measure_time!(preprocess_image(&img, contrast_opt, invert_opt,));
+    // リサイズしてキャンバスに貼り付け
+    let (width, height) = (cols * 2, rows * 4);
+    let img = measure_time!(resize(&img, width, height, FilterType::Nearest));
+    // ピクセルを二値化する
+    let img = measure_time!(binarize(&img, binarize_opt));
+    img
+}
 
 
 // 画像をファイルに保存

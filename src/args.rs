@@ -21,7 +21,7 @@ pub enum BinarizeOption {
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about)]
 pub struct Args {
-    /// Input image file path
+    /// Input image file path or video file path
     #[arg(value_name = "INPUT")]
     pub input: String,
 

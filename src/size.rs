@@ -8,7 +8,7 @@ use std::fmt;
 //     pub height: u32,
 // }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Size(pub u32, pub u32);
 
 impl fmt::Display for Size {
