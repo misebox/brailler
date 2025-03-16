@@ -41,6 +41,10 @@ pub struct Args {
     #[arg(long, default_value = "none")]
     pub binarize: BinarizeOption,
 
+    /// Generate a bash script that shows the braille text
+    #[arg(long, default_value = "")]
+    pub scriptify: String,
+
     /// Verbose mode
     #[arg(short, long)]
     pub verbose: bool,
