@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt, str::FromStr};
 
 #[derive(Debug, Clone)]
 pub struct Size(pub u32, pub u32);
@@ -9,11 +9,6 @@ impl fmt::Display for Size {
     }
 }
 
-impl ToString for Size {
-    fn to_string(&self) -> String {
-        format!("{}x{}", self.0, self.1)
-    }
-}
 
 impl FromStr for Size {
     type Err = String;
