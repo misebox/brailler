@@ -1,12 +1,4 @@
 use std::str::FromStr;
-use std::fmt;
-
-// // Define the Size type
-// #[derive(Debug, Clone)]
-// pub struct Size {
-//     pub width: u32,
-//     pub height: u32,
-// }
 
 #[derive(Debug, Clone)]
 pub struct Size(pub u32, pub u32);
@@ -14,6 +6,12 @@ pub struct Size(pub u32, pub u32);
 impl fmt::Display for Size {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}x{}", self.0, self.1)
+    }
+}
+
+impl ToString for Size {
+    fn to_string(&self) -> String {
+        format!("{}x{}", self.0, self.1)
     }
 }
 
