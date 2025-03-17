@@ -10,6 +10,8 @@ fi
 TEXT=$1
 shift
 
+BRAILLE_FONT=${BRAILLE_FONT:-Noto-Sans-CJK-JP}
+
 convert -fill white -background 'srgb(10,10,10)' -font "${BRAILLE_FONT}" -pointsize 400 label:"${TEXT}" /tmp/img.png
 convert /tmp/img.png -fuzz 10% -trim +repage /tmp/output.png
 brailler /tmp/output.png $*

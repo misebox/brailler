@@ -1,12 +1,4 @@
-use std::str::FromStr;
-use std::fmt;
-
-// // Define the Size type
-// #[derive(Debug, Clone)]
-// pub struct Size {
-//     pub width: u32,
-//     pub height: u32,
-// }
+use std::{fmt, str::FromStr};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Size(pub u32, pub u32);
@@ -16,6 +8,7 @@ impl fmt::Display for Size {
         write!(f, "{}x{}", self.0, self.1)
     }
 }
+
 
 impl FromStr for Size {
     type Err = String;
