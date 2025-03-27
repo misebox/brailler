@@ -26,8 +26,8 @@ ${CODE_BLOCK}
 Example:
 
 ${CODE_BLOCK}
-\$ brailler $IMG_00 --size 60x0
-$( brailler $IMG_00 --size 60x0 )
+\$ brailler $IMG_00 --size 60x0 --binarize fsdith
+$( brailler $IMG_00 --size 60x0 --binarize fsdith )
 ${CODE_BLOCK}
 
 ## size
