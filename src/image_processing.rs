@@ -3,10 +3,8 @@ use image::{GrayImage, Luma, ImageBuffer, GenericImage};
 use imageproc::contrast::equalize_histogram;
 use imageproc::contrast::otsu_level;
 
-use crate::args::BinarizeOption;
-use crate::args::ContrastOption;
+use crate::args;
 use crate::measure_time;
-
 
 
 // 画像の色反転
@@ -131,12 +129,12 @@ pub fn binarize_with_otsu(input: &GrayImage) -> GrayImage {
 // 画像処理パイプライン
 pub fn preprocess_image(
     input: &GrayImage,
-    contrast_opt: ContrastOption,
+    contrast_opt: args::ContrastOption,
     invert_opt: bool,
 ) -> GrayImage {
     let img = input.clone();
-    let img = if contrast_opt == ContrastOption::Stretch { contrast_stretch(&img) } else { img };
-    let img = if contrast_opt == ContrastOption::Equalize { equalize_histogram(&img) } else { img };
+    let img = if contrast_opt == args::ContrastOption::Stretch { contrast_stretch(&img) } else { img };
+    let img = if contrast_opt == args::ContrastOption::Equalize { equalize_histogram(&img) } else { img };
     let img = if !invert_opt { invert_image(&img) } else { img };
     img
 }
@@ -145,15 +143,15 @@ pub fn preprocess_image(
 #[allow(clippy::let_and_return)]
 pub fn binarize(
     input: &GrayImage,
-    binarize_opt: BinarizeOption,
+    binarize_opt: args::BinarizeOption,
 ) -> GrayImage {
 
     let img = input.clone();
-    let img = if binarize_opt == BinarizeOption::Odith {
+    let img = if binarize_opt == args::BinarizeOption::Odith {
         ordered_dither(&img)
-    } else if binarize_opt == BinarizeOption::Fsdith {
+    } else if binarize_opt == args::BinarizeOption::Fsdith {
         floyd_steinberg_dither(&img)
-    } else if binarize_opt == BinarizeOption::Otsu {
+    } else if binarize_opt == args::BinarizeOption::Otsu {
         binarize_with_otsu(&img)
     } else {
         img
@@ -165,9 +163,9 @@ pub fn process_image(
     img: &GrayImage,
     cols: u32,
     rows: u32,
-    contrast_opt: ContrastOption,
+    contrast_opt: args::ContrastOption,
     invert_opt: bool,
-    binarize_opt: BinarizeOption,
+    binarize_opt: args::BinarizeOption,
 ) -> GrayImage {
     let img = measure_time!(preprocess_image(&img, contrast_opt, invert_opt,));
     // リサイズしてキャンバスに貼り付け

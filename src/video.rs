@@ -1,16 +1,13 @@
 use ffmpeg_next::frame;
 use ffmpeg_next::{self, software::scaling::flag::Flags, software::scaling};
 use ffmpeg_next::media::Type;
-use ffmpeg_next::util::frame::video::Video;
-use image::imageops::{resize, FilterType};
 use image::GrayImage;
-use std::process::Command;
 
 use crate::args::Args;
 use crate::braille::convert_size;
-use crate::image_processing::{binarize, preprocess_image, process_image};
+use crate::image_processing::{binarize, preprocess_image};
 use crate::size::Size;
-
+use crate::measure_time;
 
 pub struct VideoData {
     pub frames: Vec<GrayImage>,
@@ -68,7 +65,7 @@ pub fn load_frames(
                 let width = gray_frame.width() as usize;
                 let height = gray_frame.height() as usize;
                 let data = gray_frame.data(0);
-                let linesize = (data.len() / height);
+                let linesize = data.len() / height;
                 let mut img_buf = Vec::with_capacity(width * height);
                 for y in 0..height {
                     let start = y * linesize;
@@ -92,10 +89,9 @@ pub fn load_frames(
                     first_frame_saved = true;
                 }
 
-                let img = measure_time!(preprocess_image(&img, args.contrast, args.invert,));
+                let img = measure_time!(preprocess_image(&img, args.contrast, args.invert));
                 // ピクセルを二値化する
                 let img = measure_time!(binarize(&img, args.binarize));
-
 
                 frames.push(img);
             }

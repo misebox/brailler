@@ -1,4 +1,4 @@
-use image::GrayImage;
+pub use image::GrayImage;
 
 pub fn generate_braille(img: &GrayImage, cols: u32, rows: u32) -> String {
     let width = img.width();

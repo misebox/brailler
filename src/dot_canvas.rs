@@ -1,5 +1,8 @@
-use crate::position::Position;
 
+pub struct Position {
+    pub x: i32,
+    pub y: i32,
+}
 /// 各dotをu8で表現するキャンバス。各要素は 0 (off) または 1 (on) を持つ。
 pub struct DotCanvas {
     width: usize,
