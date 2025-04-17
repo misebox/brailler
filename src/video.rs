@@ -1,6 +1,12 @@
+#[cfg(feature = "video")]
 use ffmpeg_next::frame;
+
+#[cfg(feature = "video")]
 use ffmpeg_next::{self, software::scaling::flag::Flags, software::scaling};
+
+#[cfg(feature = "video")]
 use ffmpeg_next::media::Type;
+
 use image::GrayImage;
 
 use crate::args::Args;
@@ -9,6 +15,7 @@ use crate::image_processing::{binarize, preprocess_image};
 use crate::size::Size;
 use crate::measure_time;
 
+#[cfg(feature = "video")]
 pub struct VideoData {
     pub frames: Vec<GrayImage>,
     pub size: Size,
@@ -16,6 +23,7 @@ pub struct VideoData {
     pub fps: f32,
 }
 
+#[cfg(feature = "video")]
 pub fn load_frames(
     path: &str,
     args: Args,
@@ -109,6 +117,7 @@ pub fn load_frames(
 }
 
 /// Get the FPS of a video file
+#[cfg(feature = "video")]
 pub fn get_fps(ictx: &ffmpeg_next::format::context::Input) -> Result<f32, String> {
     let video_stream = ictx.streams().best(Type::Video).ok_or("No video stream")?;
     let avg_frame_rate = video_stream.avg_frame_rate();

@@ -13,9 +13,68 @@ use brailler::args;
 use brailler::braille;
 use brailler::scriptify;
 use brailler::image_processing;
+
+#[cfg(feature="video")]
 use brailler::video;
 
 
+# [cfg(not(feature="video"))]
+pub fn process_video(ftype: file_type::FileType, img_path: &str, args: args::Args) {
+    eprintln!("動画処理は無効です")
+}
+# [cfg(feature="video")]
+pub fn process_video(ftype: file_type::FileType, img_path: &str, args: args::Args) {
+    // 動画の処理
+    let video_data = video::load_frames(
+        &img_path,
+        args.clone(),
+    )?;
+    let (cols, rows) = (video_data.size.0 / 2, video_data.size.1 / 4);
+
+    if args.verbose {
+        eprintln!("{:?}", args);
+        eprintln!("Input: {}", img_path);
+        eprintln!("File type: {:?}", ftype);
+        eprintln!("Ratio: {}", video_data.ratio);
+        eprintln!("Specified Size: {:?}", args.size);
+        eprintln!("Image size: {}", video_data.size);
+        eprintln!("Image FPS: {}", video_data.fps);
+        eprintln!("Cols: {}, Rows: {}", cols, rows);
+    }
+
+    let avg_wait = std::time::Duration::from_secs_f32(1.0 / video_data.fps);
+
+    if args.scriptify.is_empty() {
+        for img in video_data.frames {
+            let start = std::time::Instant::now();
+            let output = measure_time!(generate_braille(&img, cols, rows));
+            print!("\x1B[2J\x1B[1;1H");
+            io::stdout().flush().unwrap();
+            println!("{}", output);
+            io::stdout().flush().unwrap();
+            // sleep
+            let elapsed= std::time::Instant::now().duration_since(start);
+            if elapsed < avg_wait {
+                std::thread::sleep(avg_wait - elapsed);
+            }
+        }
+    } else {
+        // カンマ区切りの文字列に変換
+        let output = video_data.frames.iter().map(
+            |img|
+                generate_braille(img, cols, rows))
+                .collect::<Vec<_>>()
+                .join(",\n");
+        // スクリプト出力
+        let wait_sec = (1.0 / video_data.fps) as f32;
+        if let Ok(script) = scriptify::generate_bash_script_for_video(&output, wait_sec) {
+            scriptify::save_script(&script, &args.scriptify)?;
+            eprintln!("Script file is created: {}", args.scriptify);
+        } else {
+            eprintln!("Failed to generate script");
+        }
+    }
+}
 
 
 
@@ -65,57 +124,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         }
     } else if ftype == file_type::FileType::Video {
-        // 動画の処理
-        let video_data = video::load_frames(
-            &img_path,
-            args.clone(),
-        )?;
-        let (cols, rows) = (video_data.size.0 / 2, video_data.size.1 / 4);
-
-        if args.verbose {
-            eprintln!("{:?}", args);
-            eprintln!("Input: {}", img_path);
-            eprintln!("File type: {:?}", ftype);
-            eprintln!("Ratio: {}", video_data.ratio);
-            eprintln!("Specified Size: {:?}", args.size);
-            eprintln!("Image size: {}", video_data.size);
-            eprintln!("Image FPS: {}", video_data.fps);
-            eprintln!("Cols: {}, Rows: {}", cols, rows);
-        }
-
-        let avg_wait = std::time::Duration::from_secs_f32(1.0 / video_data.fps);
-
-        if args.scriptify.is_empty() {
-            for img in video_data.frames {
-                let start = std::time::Instant::now();
-                let output = measure_time!(generate_braille(&img, cols, rows));
-                print!("\x1B[2J\x1B[1;1H");
-                io::stdout().flush().unwrap();
-                println!("{}", output);
-                io::stdout().flush().unwrap();
-                // sleep
-                let elapsed= std::time::Instant::now().duration_since(start);
-                if elapsed < avg_wait {
-                    std::thread::sleep(avg_wait - elapsed);
-                }
-            }
-        } else {
-            // カンマ区切りの文字列に変換
-            let output = video_data.frames.iter().map(
-                |img|
-                    generate_braille(img, cols, rows))
-                    .collect::<Vec<_>>()
-                    .join(",\n");
-            // スクリプト出力
-            let wait_sec = (1.0 / video_data.fps) as f32;
-            if let Ok(script) = scriptify::generate_bash_script_for_video(&output, wait_sec) {
-                scriptify::save_script(&script, &args.scriptify)?;
-                eprintln!("Script file is created: {}", args.scriptify);
-            } else {
-                eprintln!("Failed to generate script");
-            }
-        }
-
+        // 動画処理
+        process_video(ftype, &img_path, args);
     } else {
         eprintln!("Unsupported file type: {:?}", ftype);
         return Ok(());

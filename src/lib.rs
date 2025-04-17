@@ -7,6 +7,9 @@ pub mod args;
 pub mod braille;
 pub mod scriptify;
 pub mod image_processing;
+
+
+#[cfg(feature="video")]
 pub mod video;
 
 pub use image::{self, GrayImage};
