@@ -211,6 +211,7 @@ dependencies = [
  "base64",
  "clap",
  "ffmpeg-next",
+ "ffmpeg-sys-next",
  "flate2",
  "image",
  "imageproc",
