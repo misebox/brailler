@@ -11,7 +11,7 @@ pub enum FileType {
 pub fn infer_type(filepath: &str) -> FileType {
     let mut file_type = FileType::Unknown;
     if let Ok(buf) = fs::read(filepath) {
-         if let Some(kind) = infer::get(&buf) {
+        if let Some(kind) = infer::get(&buf) {
             if kind.mime_type().starts_with("image/") {
                 file_type = FileType::Image;
             } else if kind.mime_type().starts_with("video/") {

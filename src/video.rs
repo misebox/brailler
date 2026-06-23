@@ -1,21 +1,14 @@
-#[cfg(feature = "video")]
 use ffmpeg_next::frame;
-
-#[cfg(feature = "video")]
-use ffmpeg_next::{self, software::scaling::flag::Flags, software::scaling};
-
-#[cfg(feature = "video")]
 use ffmpeg_next::media::Type;
-
+use ffmpeg_next::{self, software::scaling, software::scaling::flag::Flags};
 use image::GrayImage;
 
 use crate::args::Args;
 use crate::braille::convert_size;
 use crate::image_processing::{binarize, preprocess_image};
-use crate::size::Size;
 use crate::measure_time;
+use crate::size::Size;
 
-#[cfg(feature = "video")]
 pub struct VideoData {
     pub frames: Vec<GrayImage>,
     pub size: Size,
@@ -23,12 +16,7 @@ pub struct VideoData {
     pub fps: f32,
 }
 
-#[cfg(feature = "video")]
-pub fn load_frames(
-    path: &str,
-    args: Args,
-) -> Result<VideoData, Box<dyn std::error::Error>> {
-
+pub fn load_frames(path: &str, args: Args) -> Result<VideoData, Box<dyn std::error::Error>> {
     let mut ictx = ffmpeg_next::format::input(&path)?;
     let video_stream_index = ictx
         .streams()
@@ -66,7 +54,6 @@ pub fn load_frames(
             decoder.send_packet(&packet)?;
 
             while decoder.receive_frame(&mut decoded).is_ok() {
-
                 let mut gray_frame = frame::Video::empty();
                 scaler.run(&decoded, &mut gray_frame)?;
 
@@ -117,7 +104,6 @@ pub fn load_frames(
 }
 
 /// Get the FPS of a video file
-#[cfg(feature = "video")]
 pub fn get_fps(ictx: &ffmpeg_next::format::context::Input) -> Result<f32, String> {
     let video_stream = ictx.streams().best(Type::Video).ok_or("No video stream")?;
     let avg_frame_rate = video_stream.avg_frame_rate();

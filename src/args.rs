@@ -1,5 +1,5 @@
-use clap::Parser; // Modified import to include ArgGroup
-use crate::size::Size; // Added import for Size
+use crate::size::Size;
+use clap::Parser; // Modified import to include ArgGroup // Added import for Size
 
 use clap::ValueEnum;
 
@@ -48,5 +48,4 @@ pub struct Args {
     /// Verbose mode
     #[arg(short, long)]
     pub verbose: bool,
-
 }

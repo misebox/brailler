@@ -1,4 +1,3 @@
-
 pub struct Position {
     pub x: i32,
     pub y: i32,
@@ -22,7 +21,10 @@ impl DotCanvas {
 
     /// 指定した (x, y) のdotに値を設定する。valueは0か1とする。
     pub fn set(&mut self, x: i32, y: i32, value: u8) {
-        assert!(0 <= x && x < self.width as i32 && y < self.height as i32, "Index out of bounds");
+        assert!(
+            0 <= x && x < self.width as i32 && y < self.height as i32,
+            "Index out of bounds"
+        );
         self.data[(y * self.width as i32 + x) as usize] = value;
     }
 
@@ -155,8 +157,7 @@ impl DotCanvas {
                     }
                 }
                 // Unicode Braille文字はU+2800から始まる
-                let braille_char = std::char::from_u32(0x2800 + cell as u32)
-                    .unwrap_or(' ');
+                let braille_char = std::char::from_u32(0x2800 + cell as u32).unwrap_or(' ');
                 output.push(braille_char);
             }
             output.push('\n');

@@ -18,7 +18,6 @@ pub(crate) fn get_env_bool(key: &str) -> bool {
 
 pub(crate) static MEASURE_TIME: LazyLock<bool> = LazyLock::new(|| get_env_bool("MEASURE_TIME"));
 
-
 #[macro_export]
 macro_rules! measure_time {
     ($expr:expr) => {{

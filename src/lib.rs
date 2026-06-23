@@ -1,15 +1,14 @@
 mod utilities;
 
-pub mod size;
-pub mod dot_canvas;
-pub mod file_type;
 pub mod args;
 pub mod braille;
-pub mod scriptify;
+pub mod dot_canvas;
+pub mod file_type;
 pub mod image_processing;
+pub mod scriptify;
+pub mod size;
 
-
-#[cfg(feature="video")]
+#[cfg(feature = "video")]
 pub mod video;
 
 pub use image::{self, GrayImage};

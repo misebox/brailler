@@ -1,11 +1,10 @@
-use image::imageops::{resize, FilterType};
-use image::{GrayImage, Luma, ImageBuffer, GenericImage};
+use image::imageops::{FilterType, resize};
+use image::{GenericImage, GrayImage, ImageBuffer, Luma};
 use imageproc::contrast::equalize_histogram;
 use imageproc::contrast::otsu_level;
 
 use crate::args;
 use crate::measure_time;
-
 
 // 画像の色反転
 pub fn invert_image(input: &GrayImage) -> GrayImage {
@@ -21,15 +20,21 @@ pub fn contrast_stretch(input: &GrayImage) -> GrayImage {
     let (mut min_val, mut max_val) = (255u8, 0u8);
     for pixel in input.pixels() {
         let v = pixel[0];
-        if v < min_val { min_val = v; }
-        if v > max_val { max_val = v; }
+        if v < min_val {
+            min_val = v;
+        }
+        if v > max_val {
+            max_val = v;
+        }
     }
-    if min_val == max_val { return input.clone(); }
+    if min_val == max_val {
+        return input.clone();
+    }
     let range = max_val - min_val;
     let mut output = input.clone();
     for pixel in output.pixels_mut() {
-        let normalized = ((pixel[0].saturating_sub(min_val)) as f32 * 255.0 / range as f32)
-            .round() as u8;
+        let normalized =
+            ((pixel[0].saturating_sub(min_val)) as f32 * 255.0 / range as f32).round() as u8;
         *pixel = Luma([normalized]);
     }
     output
@@ -39,12 +44,7 @@ pub fn contrast_stretch(input: &GrayImage) -> GrayImage {
 pub fn ordered_dither(input: &GrayImage) -> GrayImage {
     let (width, height) = input.dimensions();
     let mut output = GrayImage::new(width, height);
-    const MATRIX: [[u8; 4]; 4] = [
-        [ 0,  8,  2, 10],
-        [12,  4, 14,  6],
-        [ 3, 11,  1,  9],
-        [15,  7, 13,  5],
-    ];
+    const MATRIX: [[u8; 4]; 4] = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
     let matrix_size = 4;
     for y in 0..height {
         for x in 0..width {
@@ -67,13 +67,13 @@ pub fn floyd_steinberg_dither(input: &GrayImage) -> GrayImage {
     let (width, height) = input.dimensions();
     let w = width as usize;
     let h = height as usize;
-    
+
     // 入力画像の各ピクセル値を f32 に変換してバッファに展開
     let mut buffer: Vec<f32> = input.pixels().map(|p| p[0] as f32).collect();
-    
+
     // 出力画像用バッファ
     let mut output = GrayImage::new(width, height);
-    
+
     // 画素を左上から右下に向かって走査
     for y in 0..h {
         for x in 0..w {
@@ -82,10 +82,10 @@ pub fn floyd_steinberg_dither(input: &GrayImage) -> GrayImage {
             // しきい値は128.0。これを超えれば255、未満なら0
             let new_value = if old_value >= 128.0 { 255.0 } else { 0.0 };
             let error = old_value - new_value;
-            
+
             // 出力画像に値をセット
             output.put_pixel(x as u32, y as u32, Luma([new_value as u8]));
-            
+
             // 誤差を各隣接画素に分配する
             // 右: error * 7/16
             if x + 1 < w {
@@ -105,7 +105,7 @@ pub fn floyd_steinberg_dither(input: &GrayImage) -> GrayImage {
             }
         }
     }
-    
+
     output
 }
 
@@ -113,17 +113,16 @@ pub fn floyd_steinberg_dither(input: &GrayImage) -> GrayImage {
 pub fn binarize_with_otsu(input: &GrayImage) -> GrayImage {
     // 大津の方法で閾値を求める
     let threshold = otsu_level(input);
-    
+
     // 求めた閾値で画像を二値化
     let mut output = input.clone();
     for pixel in output.pixels_mut() {
         // threshold未満なら黒、以上なら白
         pixel[0] = if pixel[0] < threshold { 0 } else { 255 };
     }
-    
+
     output
 }
-
 
 #[allow(clippy::let_and_return)]
 // 画像処理パイプライン
@@ -133,19 +132,23 @@ pub fn preprocess_image(
     invert_opt: bool,
 ) -> GrayImage {
     let img = input.clone();
-    let img = if contrast_opt == args::ContrastOption::Stretch { contrast_stretch(&img) } else { img };
-    let img = if contrast_opt == args::ContrastOption::Equalize { equalize_histogram(&img) } else { img };
+    let img = if contrast_opt == args::ContrastOption::Stretch {
+        contrast_stretch(&img)
+    } else {
+        img
+    };
+    let img = if contrast_opt == args::ContrastOption::Equalize {
+        equalize_histogram(&img)
+    } else {
+        img
+    };
     let img = if !invert_opt { invert_image(&img) } else { img };
     img
 }
 
 // 画像処理パイプライン
 #[allow(clippy::let_and_return)]
-pub fn binarize(
-    input: &GrayImage,
-    binarize_opt: args::BinarizeOption,
-) -> GrayImage {
-
+pub fn binarize(input: &GrayImage, binarize_opt: args::BinarizeOption) -> GrayImage {
     let img = input.clone();
     let img = if binarize_opt == args::BinarizeOption::Odith {
         ordered_dither(&img)
@@ -176,7 +179,6 @@ pub fn process_image(
     img
 }
 
-
 // 画像をファイルに保存
 pub fn save_image(img: &GrayImage, path: &str) {
     img.save(path).expect("画像の保存に失敗しました");
@@ -185,6 +187,8 @@ pub fn save_image(img: &GrayImage, path: &str) {
 // キャンバスに画像を貼り付け
 pub fn put_image_into_canvas(img: &GrayImage, width: u32, height: u32) -> GrayImage {
     let mut canvas: GrayImage = ImageBuffer::from_pixel(width, height, Luma([255u8]));
-    canvas.copy_from(img, 0, 0).expect("画像の貼り付けに失敗しました");
+    canvas
+        .copy_from(img, 0, 0)
+        .expect("画像の貼り付けに失敗しました");
     canvas
 }

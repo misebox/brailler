@@ -35,7 +35,7 @@ pub fn generate_braille(img: &GrayImage, cols: u32, rows: u32) -> String {
 
 pub fn convert_size(w: u32, h: u32, _cols: u32, _rows: u32) -> (u32, u32) {
     let ratio = w as f32 / h as f32 * 2f32;
-    let mut cols= _cols;
+    let mut cols = _cols;
     let mut rows = _rows;
     if cols == 0 && rows == 0 {
         rows = 60; // Default rows

@@ -1,7 +1,10 @@
-use flate2::write::GzEncoder;
+use base64::{Engine as _, engine::general_purpose};
 use flate2::Compression;
-use base64::{engine::general_purpose, Engine as _};
-use std::{io::{self, Write}, os::unix::fs::OpenOptionsExt};
+use flate2::write::GzEncoder;
+use std::{
+    io::{self, Write},
+    os::unix::fs::OpenOptionsExt,
+};
 
 fn gzip_and_base64_encode(input: &str) -> io::Result<String> {
     // Gzip 圧縮
@@ -70,7 +73,9 @@ pub fn generate_bash_script_for_image(output: &str) -> io::Result<String> {
 
 pub fn generate_bash_script_for_video(output: &str, sleep: f32) -> io::Result<String> {
     let encoded = gzip_and_base64_encode(output)?;
-    let script = BASH_TEMPLATE_FOR_VIDEO.replace("{{OUTPUT}}", &encoded).replace("{{SLEEP}}", &sleep.to_string());
+    let script = BASH_TEMPLATE_FOR_VIDEO
+        .replace("{{OUTPUT}}", &encoded)
+        .replace("{{SLEEP}}", &sleep.to_string());
     Ok(script)
 }
 
