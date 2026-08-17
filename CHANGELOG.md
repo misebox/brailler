@@ -1,5 +1,7 @@
 # Changelog
 
+## [v0.2.4](https://github.com/misebox/brailler/compare/v0.2.3...v0.2.4) - 2026-06-23
+
 ## [v0.2.3](https://github.com/misebox/brailler/compare/v0.2.2...v0.2.3) - 2025-04-17
 
 ## [v0.2.2](https://github.com/misebox/brailler/compare/v0.2.1...v0.2.2) - 2025-04-17
